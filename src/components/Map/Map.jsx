@@ -21,16 +21,6 @@ export default function Map() {
             {/* <GeoJSON data={data} onEachFeature={(feature, layer) => {
                 layer.bindPopup('PM2.5: ' + feature.properties['PM2,5'] + "<br /> Wiatr: " + feature.properties['Kierunek wiatru']);
             }}/> */}
-            <Ellipse
-                latLng={position}
-                radii={[100, 200]}
-                tilt={40}
-                options={{
-                    color: 'red',
-                    fillColor: 'red',
-                    fillOpacity: 0.5
-                }}
-            />
 
             {data && data.features.map(({ properties, geometry }) => (
                 <Ellipse
@@ -38,11 +28,9 @@ export default function Map() {
                     latLng={geometry.coordinates.reverse()}
                     radii={[25, 50]}
                     tilt={45}
-                    options={{
-                        color: 'red',
-                        fillColor: 'red',
-                        fillOpacity: 0.5
-                    }}
+                    color={'red'}
+                    fillColor={'red'}
+                    fillOpacity={0.5}
                 />
             ))}
         </LeafletMap>

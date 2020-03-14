@@ -1,17 +1,25 @@
-import { Component } from 'react';
 import L from 'leaflet';
 import "leaflet-ellipse";
-import { withLeaflet } from 'react-leaflet';
+import { withLeaflet, Path } from 'react-leaflet';
 
-class Ellipse extends Component {
-    componentDidMount() {
-        const { latLng, radii, tilt, options } = this.props;
-        const { map } = this.props.leaflet;
-        L.ellipse(latLng, radii, tilt, options).addTo(map);
+class Ellipse extends Path {
+    createLeafletElement() {
+        const { latLng, radii, tilt, ...options } = this.props;
+        return new L.Ellipse(latLng, radii, tilt, this.getOptions(options));
     }
 
-    render() {
-        return null;
+    updateLeafletElement(fromProps, toProps) {
+        if(toProps.latLng !== fromProps.latLng) {
+            this.leafletElement.setLatLang(toProps.latLng);
+        }
+
+        if(toProps.radii !== fromProps.radii) {
+            this.leafletElement.setRadii(toProps.radii);
+        }
+
+        if(toProps.tilt !== fromProps.tilt) {
+            this.leafletElement.setTilt(toProps.tilt);
+        }
     }
 }
 
