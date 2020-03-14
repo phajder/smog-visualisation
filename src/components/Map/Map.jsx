@@ -6,6 +6,7 @@ import input from '../../data/input';
 
 export default function Map() {
     const position = [49.9844399, 21.9356703];
+    const data = input();
     return (
         <LeafletMap center={position} zoom={14}>
             <TileLayer
@@ -17,9 +18,9 @@ export default function Map() {
                     A pretty CSS3 popup. <br /> Easily customizable.
                 </Popup>
             </Marker>
-            <GeoJSON data={input()} onEachFeature={(feature, layer) => {
+            {/* <GeoJSON data={data} onEachFeature={(feature, layer) => {
                 layer.bindPopup('PM2.5: ' + feature.properties['PM2,5'] + "<br /> Wiatr: " + feature.properties['Kierunek wiatru']);
-            }}/>
+            }}/> */}
             <Ellipse
                 latLng={position}
                 radii={[100, 200]}
@@ -30,6 +31,20 @@ export default function Map() {
                     fillOpacity: 0.5
                 }}
             />
+
+            {data && data.features.map(({ properties, geometry }) => (
+                <Ellipse
+                    key={properties["Punkt pomiaru"]}
+                    latLng={geometry.coordinates.reverse()}
+                    radii={[25, 50]}
+                    tilt={45}
+                    options={{
+                        color: 'red',
+                        fillColor: 'red',
+                        fillOpacity: 0.5
+                    }}
+                />
+            ))}
         </LeafletMap>
     );
 };
