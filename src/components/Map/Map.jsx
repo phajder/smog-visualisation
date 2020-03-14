@@ -1,38 +1,35 @@
 import React from 'react';
 import { Map as LeafletMap, GeoJSON, Marker, Popup, TileLayer } from 'react-leaflet';
-import * as turf from '@turf/turf';
 
-function gen() {
-    var extent = [0, 30, 20, 50];
-    var cellWidth = 100;
-    var pointGrid = turf.pointGrid(extent, cellWidth, {units: 'miles'});
-
-    for (var i = 0; i < pointGrid.features.length; i++) {
-    pointGrid.features[i].properties.temperature = Math.random() * 10;
-    }
-    var breaks = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
-    var lines = turf.isolines(pointGrid, breaks, {zProperty: 'temperature'});
-
-    return lines;
-}
+import { Ellipse } from '../../components';
+import input from '../../data/input';
 
 export default function Map() {
-    const position = [51.984880, 19.368896];
+    const position = [49.9844399, 21.9356703];
     return (
-        <LeafletMap center={position} zoom={13}>
+        <LeafletMap center={position} zoom={14}>
             <TileLayer
                 attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             <Marker position={position}>
-            <Popup>
-                A pretty CSS3 popup. <br /> Easily customizable.
-            </Popup>
+                <Popup>
+                    A pretty CSS3 popup. <br /> Easily customizable.
+                </Popup>
             </Marker>
-            <GeoJSON data={gen()} onEachFeature={(feature, layer) => {
-                layer.bindPopup('Hello, I have ' + feature.properties.temperature + ' degrees!');
+            <GeoJSON data={input()} onEachFeature={(feature, layer) => {
+                layer.bindPopup('PM2.5: ' + feature.properties['PM2,5'] + "<br /> Wiatr: " + feature.properties['Kierunek wiatru']);
             }}/>
+            <Ellipse
+                latLng={position}
+                radii={[100, 200]}
+                tilt={40}
+                options={{
+                    color: 'red',
+                    fillColor: 'red',
+                    fillOpacity: 0.5
+                }}
+            />
         </LeafletMap>
     );
 };
