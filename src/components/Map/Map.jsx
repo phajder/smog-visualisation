@@ -1,8 +1,13 @@
 import React from 'react';
-import { Map as LeafletMap, GeoJSON, Marker, Popup, TileLayer } from 'react-leaflet';
+import { Map as LeafletMap, GeoJSON, TileLayer, Popup } from 'react-leaflet';
 
 import { Ellipse } from '../../components';
 import input from '../../data/input';
+
+const filterFeatureGroup = (data, threshold) => ({
+    type: "FeatureGroup",
+    features: data.features.filter(feature => feature.properties["pm2.5"] > threshold)
+});
 
 export default function Map() {
     const position = [49.9844399, 21.9356703];
@@ -13,25 +18,29 @@ export default function Map() {
                 attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            <Marker position={position}>
-                <Popup>
-                    A pretty CSS3 popup. <br /> Easily customizable.
-                </Popup>
-            </Marker>
-            {/* <GeoJSON data={data} onEachFeature={(feature, layer) => {
-                layer.bindPopup('PM2.5: ' + feature.properties['PM2,5'] + "<br /> Wiatr: " + feature.properties['Kierunek wiatru']);
-            }}/> */}
-
+            <GeoJSON
+                data={filterFeatureGroup(data, 30)}
+                onEachFeature={(feature, layer) => {
+                    layer.bindPopup(
+                        'Id: ' + feature.properties.id + 
+                        '<br />PM2.5: ' + feature.properties['pm2.5'] + 
+                        "<br />Wiatr: " + feature.properties.windDir);
+                }}
+                coordsToLatLng={coords => coords}
+            />
+            
             {data && data.features.map(({ properties, geometry }) => (
                 <Ellipse
-                    key={properties["Punkt pomiaru"]}
-                    latLng={geometry.coordinates.reverse()}
+                    key={properties.id}
+                    latLng={geometry.coordinates}
                     radii={[25, 50]}
                     tilt={45}
                     color={'red'}
                     fillColor={'red'}
                     fillOpacity={0.5}
-                />
+                >
+                    <Popup>{properties['pm2.5']}</Popup>
+                </Ellipse>
             ))}
         </LeafletMap>
     );
