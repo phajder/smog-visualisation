@@ -3,14 +3,12 @@ import { Map as LeafletMap, GeoJSON, TileLayer, Popup } from 'react-leaflet';
 
 import { Ellipse } from '../../components';
 import input from '../../data/input';
-
-const filterFeatureGroup = (data, threshold) => ({
-    type: "FeatureGroup",
-    features: data.features.filter(feature => feature.properties["pm2.5"] > threshold)
-});
+import * as util from '../../util';
 
 export default function Map() {
-    const position = [49.9844399, 21.9356703];
+    const position = [49.9844399, 21.9356703],
+          radii = [50, 25],
+          tilt = 30;
     const data = input();
     return (
         <LeafletMap center={position} zoom={14}>
@@ -18,8 +16,9 @@ export default function Map() {
                 attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
+
             <GeoJSON
-                data={filterFeatureGroup(data, 30)}
+                data={util.filterFeatureGroup(data, "pm2.5", 35)}
                 onEachFeature={(feature, layer) => {
                     layer.bindPopup(
                         'Id: ' + feature.properties.id + 
@@ -29,12 +28,12 @@ export default function Map() {
                 coordsToLatLng={coords => coords}
             />
             
-            {data && data.features.map(({ properties, geometry }) => (
+            {data && util.filterFeatureGroup(data, "pm2.5", 35).features.map(({ properties, geometry }) => (
                 <Ellipse
                     key={properties.id}
-                    latLng={geometry.coordinates}
-                    radii={[25, 50]}
-                    tilt={45}
+                    latLng={util.findEllipseCenter(geometry.coordinates, radii, tilt)}
+                    radii={radii}
+                    tilt={tilt}
                     color={'red'}
                     fillColor={'red'}
                     fillOpacity={0.5}
