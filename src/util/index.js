@@ -12,5 +12,18 @@ const findEllipseCenter = (emissionPoint, radii, tilt) => {
           lon = C * emissionPoint[1] +  radiusCoeff * Math.cos(angle)/Math.cos(lat);
     return [lat / C, lon / C];
 };
+const calculateEllipseTilt = (windDirection) => {
+    switch(windDirection) {
+        case "NE": return 315;
+        case "N": return 270;
+        case "NW": return 225;
+        case "W": return 180;
+        case "SW": return 135;
+        case "S": return 90;
+        case "SE": return 45;
+        case "E": return 0;
+        default: return null;
+    }
+};
 
-export { filterFeatureGroup, findEllipseCenter };
+export { filterFeatureGroup, findEllipseCenter, calculateEllipseTilt };
