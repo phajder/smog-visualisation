@@ -3,7 +3,7 @@ import { Map as LeafletMap, GeoJSON, TileLayer, Popup } from 'react-leaflet';
 
 import { Ellipse } from '../../components';
 import input from '../../data/input';
-import * as util from '../../util';
+import { filterFeatureGroup, findEllipseCenter } from '../../util';
 
 export default function Map() {
     const position = [49.9844399, 21.9356703],
@@ -18,7 +18,7 @@ export default function Map() {
             />
 
             <GeoJSON
-                data={util.filterFeatureGroup(data, "pm2.5", 35)}
+                data={filterFeatureGroup(data, "pm2.5", 35)}
                 onEachFeature={(feature, layer) => {
                     layer.bindPopup(
                         'Id: ' + feature.properties.id + 
@@ -28,10 +28,10 @@ export default function Map() {
                 coordsToLatLng={coords => coords}
             />
             
-            {data && util.filterFeatureGroup(data, "pm2.5", 35).features.map(({ properties, geometry }) => (
+            {data && filterFeatureGroup(data, "pm2.5", 35).features.map(({ properties, geometry }) => (
                 <Ellipse
                     key={properties.id}
-                    latLng={util.findEllipseCenter(geometry.coordinates, radii, tilt)}
+                    latLng={findEllipseCenter(geometry.coordinates, radii, tilt)}
                     radii={radii}
                     tilt={tilt}
                     color={'red'}
