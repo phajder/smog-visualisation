@@ -41,7 +41,6 @@ class SmogLayer extends Component {
                     }
                 )}
             </div>
-            
         );
     }
 };
